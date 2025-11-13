@@ -4,14 +4,18 @@ import { ERROR_MESSAGES, AI_CONFIG } from '@/lib/constants';
 import type { AnalysisRequest, AnalysisResponse, ApiErrorResponse } from '@/types';
 import { parseAnalysisResponse } from '@/utils/analysis-parser';
 
+// Initialize OpenAI client for OpenRouter
 const openai = new OpenAI({
   apiKey: process.env.OPENROUTER_API_KEY,
   baseURL: 'https://openrouter.ai/api/v1/',
+  defaultHeaders: {
+    'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+    'X-Title': 'Resume Builder',
+  },
 });
 
-/**
- * Build the prompt for resume analysis
- */
+// Build the prompt for resume analysis
+
 function buildAnalysisPrompt(
   jobDescription: string,
   resumeContent: string,
@@ -60,26 +64,57 @@ export default async function handler(
   }
 
   try {
-    const prompt = buildAnalysisPrompt(jobDescription, resumeContent, jobTitle, companyName);
+    const fullPrompt = buildAnalysisPrompt(jobDescription, resumeContent, jobTitle, companyName);
 
-    const response = await openai.chat.completions.create({
-      model: AI_CONFIG.MODEL,
-      messages: [
-        {
-          role: 'system',
-          content:
-            'You are an expert resume analyst and career coach. Provide detailed, actionable feedback to help job seekers improve their applications.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      temperature: AI_CONFIG.TEMPERATURE,
-      max_tokens: AI_CONFIG.MAX_TOKENS,
-    });
+    // List of free models to try (in order)
+    // Note: OpenRouter free models may require the account to have purchased credits at least once
+    const freeModels = [
+      'deepseek/deepseek-chat:free', // Try :free suffix first
+      'mistralai/mixtral-8x7b-instruct:free',
+      'mistralai/mistral-7b-instruct:free',
+      'openrouter/auto', // Auto-select best free model (no :free suffix)
+      'mistralai/mixtral-8x7b-instruct', // Without :free suffix
+      'mistralai/mistral-7b-instruct',
+    ];
 
-    const analysis = response.choices[0]?.message?.content?.trim() || 'No analysis generated';
+    let analysis: string | null = null;
+    let modelName: string = AI_CONFIG.MODEL;
+    let lastError: Error | null = null;
+
+    // Try each model until one works
+    for (const model of freeModels) {
+      try {
+        const response = await openai.chat.completions.create({
+          model,
+          messages: [
+            {
+              role: 'system',
+              content:
+                'You are an expert resume analyst and career coach. Provide detailed, actionable feedback to help job seekers improve their applications.',
+            },
+            {
+              role: 'user',
+              content: fullPrompt,
+            },
+          ],
+          temperature: AI_CONFIG.TEMPERATURE,
+          max_tokens: AI_CONFIG.MAX_TOKENS,
+        });
+
+        analysis = response.choices[0]?.message?.content?.trim() || 'No analysis generated';
+        modelName = model;
+        break; // Success, exit loop
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error(String(error));
+        // Continue to next model
+        console.log(`Model ${model} failed, trying next...`);
+      }
+    }
+
+    // If all models failed, throw the last error
+    if (!analysis) {
+      throw lastError || new Error('All free models failed');
+    }
 
     // Parse structured data from analysis text
     const structuredData = parseAnalysisResponse(analysis);
@@ -93,9 +128,28 @@ export default async function handler(
   } catch (error) {
     console.error('OpenRouter API Error:', error);
 
+    // Provide helpful error messages
+    let errorDetails = error instanceof Error ? error.message : 'Unknown error';
+    
+    if (errorDetails.includes('402') || errorDetails.includes('Insufficient credits')) {
+      errorDetails = `OpenRouter requires your account to have purchased credits at least once to enable free model access, even if your balance is now $0. 
+      
+To fix this:
+1. Go to https://openrouter.ai/settings/credits
+2. Add a small amount ($1-5 minimum)
+3. Enable "Model Training" at https://openrouter.ai/settings/privacy
+4. After this one-time setup, free models should work
+
+This is an OpenRouter policy requirement for free tier access.`;
+    }
+    
+    if (errorDetails.includes('404') || errorDetails.includes('No endpoints found')) {
+      errorDetails += '. Try using openrouter/auto or check available models at https://openrouter.ai/models';
+    }
+
     return res.status(500).json({
       error: ERROR_MESSAGES.ANALYSIS_FAILED,
-      details: error instanceof Error ? error.message : 'Unknown error',
+      details: errorDetails,
     });
   }
 }

@@ -70,8 +70,12 @@ export const API_ENDPOINTS = {
 } as const;
 
 // AI Model configuration
+// Using OpenRouter with openrouter/auto to automatically select best free model
+// Alternative free models: mistralai/mixtral-8x7b-instruct, mistralai/mistral-7b-instruct
+// IMPORTANT: Enable "Model Training" in OpenRouter privacy settings at https://openrouter.ai/settings/privacy
 export const AI_CONFIG = {
-  MODEL: 'anthropic/claude-3.5-sonnet',
+  PROVIDER: 'openrouter' as 'huggingface' | 'openrouter',
+  MODEL: 'openrouter/auto', // Auto-selects best available free model
   TEMPERATURE: 0.3,
   MAX_TOKENS: 2000,
 } as const;

@@ -18,17 +18,6 @@ export default function AnalysisResults({ result }: AnalysisResultsProps) {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-white">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-2xl font-bold">Your Resume Analysis</h2>
-          <div className="text-sm text-white/60">
-            {new Date(result.timestamp).toLocaleString()}
-          </div>
-        </div>
-        <p className="text-white/70">Comprehensive analysis of your resume against the job description</p>
-      </div>
-
       {/* Visual Metrics */}
       {hasStructuredData && result.structuredData && (
         <>

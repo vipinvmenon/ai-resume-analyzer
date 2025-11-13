@@ -75,16 +75,22 @@ export default function UploadCard() {
           onChange={(e) => handleFileUpload(e.target.files)}
         />
 
-        <div className="mx-auto mb-6 grid h-14 w-14 place-items-center rounded-full bg-blue-500/15 text-2xl text-blue-300">
-          {isProcessing ? (
-            <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-300 border-t-transparent"></div>
-          ) : (
-            '⬆️'
-          )}
-        </div>
-        <p className="text-lg font-medium">
-          {isProcessing ? UI_MESSAGES.UPLOAD_PROCESSING : UI_MESSAGES.UPLOAD_DRAG_DROP}
-        </p>
+        {isProcessing ? (
+          <>
+            <div className="mx-auto mb-6 h-14 w-14 rounded-full bg-white/10 animate-pulse"></div>
+            <div className="mx-auto mb-2 h-6 w-48 rounded bg-white/10 animate-pulse"></div>
+            <div className="mx-auto h-4 w-32 rounded bg-white/10 animate-pulse"></div>
+          </>
+        ) : (
+          <>
+            <div className="mx-auto mb-6 grid h-14 w-14 place-items-center rounded-full bg-blue-500/15 text-2xl text-blue-300">
+              ⬆️
+            </div>
+            <p className="text-lg font-medium">
+              {UI_MESSAGES.UPLOAD_DRAG_DROP}
+            </p>
+          </>
+        )}
         <p className="mt-2 text-sm text-white/60">Supported formats:</p>
         <div className="mt-3 flex items-center justify-center gap-3 text-xs">
           <span className="rounded-md bg-white/10 px-2 py-1">{FILE_TYPE_LABELS.PDF}</span>
@@ -93,7 +99,7 @@ export default function UploadCard() {
         {resume && (
           <div className="mt-5">
             <p className="text-sm text-white/80">Selected: {resume.name}</p>
-            {resume.content && (
+            {/* {resume.content && (
               <div className="mt-1">
                 {resume.type === 'application/pdf' ? (
                   <p className="text-xs text-yellow-300">
@@ -103,7 +109,7 @@ export default function UploadCard() {
                   <p className="text-xs text-green-300">✓ Text extracted successfully</p>
                 )}
               </div>
-            )}
+            )} */}
           </div>
         )}
         {error && <p className="mt-3 text-sm text-red-300">{error}</p>}
