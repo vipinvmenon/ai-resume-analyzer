@@ -1,5 +1,4 @@
 import type { AnalysisResult } from '@/types';
-import { UI_MESSAGES } from '@/lib/constants';
 import MetricCard from './analysis/MetricCard';
 import SkillsBreakdown from './analysis/SkillsBreakdown';
 import KeywordDensity from './analysis/KeywordDensity';

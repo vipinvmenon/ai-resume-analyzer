@@ -37,12 +37,11 @@ export default function Job() {
   return (
     <main className="px-6 py-12">
       <Stepper active={2} />
-
       <h1 className="mt-8 text-center text-3xl font-bold text-white md:text-5xl">
         Add Job Description
       </h1>
       <p className="mt-3 text-center text-white/70">
-        Paste the job description you're targeting to analyze your resume match
+      Paste the job description you&apos;re targeting to analyze your resume match
       </p>
 
       <div className="mx-auto mt-10 max-w-4xl rounded-2xl border border-white/10 bg-white/5 p-6">

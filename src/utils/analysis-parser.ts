@@ -207,14 +207,6 @@ function extractATSIssues(text: string): ATSIssue[] {
     /absent\s+(\w+)/gi,
   ];
 
-  const mediumPatterns = [
-    /could\s+improve\s+(\w+)/gi,
-    /should\s+add\s+(\w+)/gi,
-    /consider\s+(\w+)/gi,
-  ];
-
-  const lowPatterns = [/minor\s+(\w+)/gi, /suggestion\s+for\s+(\w+)/gi];
-
   // Extract HIGH severity issues
   for (const pattern of highPatterns) {
     const matches = [...text.matchAll(pattern)];

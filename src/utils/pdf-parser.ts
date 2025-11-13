@@ -26,12 +26,12 @@ export async function parsePdfFile(file: File): Promise<string> {
     });
 
     if (!response.ok) {
-      let errorMessage = ERROR_MESSAGES.PDF_PARSE_FAILED;
+      let errorMessage: string = ERROR_MESSAGES.PDF_PARSE_FAILED;
       try {
         const errorData = await response.json();
         errorMessage = errorData.details || errorData.error || errorMessage;
-      } catch {
-        errorMessage = `Server returned ${response.status}: ${response.statusText}`;
+      } catch (error) {
+        console.error('Error parsing PDF:', error);
       }
       throw new Error(errorMessage);
     }

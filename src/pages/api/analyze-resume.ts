@@ -121,7 +121,7 @@ export default async function handler(
 
     return res.status(200).json({
       analysis,
-      model: AI_CONFIG.MODEL,
+      model: modelName,
       timestamp: new Date().toISOString(),
       structuredData: structuredData || undefined,
     });

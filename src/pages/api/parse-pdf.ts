@@ -6,6 +6,22 @@ import {
 } from '@/lib/constants';
 import type { PdfParseRequest, PdfParseResponse, ApiErrorResponse } from '@/types';
 
+type Pdf2JsonTextRun = {
+  T?: string;
+};
+
+type Pdf2JsonTextItem = {
+  R?: Pdf2JsonTextRun[];
+};
+
+type Pdf2JsonPage = {
+  Texts?: Pdf2JsonTextItem[];
+};
+
+interface Pdf2JsonData {
+  Pages?: Pdf2JsonPage[];
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<PdfParseResponse | ApiErrorResponse>
@@ -89,7 +105,7 @@ export default async function handler(
         );
       });
 
-      pdfParser.on('pdfParser_dataReady', (pdfData: any) => {
+      pdfParser.on('pdfParser_dataReady', (pdfData: Pdf2JsonData) => {
         clearTimeout(timeout);
         try {
           // Extract text from all pages
