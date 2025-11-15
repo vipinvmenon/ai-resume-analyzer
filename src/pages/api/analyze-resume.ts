@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiHandler } from 'next';
 import { OpenAI } from 'openai';
 import { ERROR_MESSAGES, AI_CONFIG } from '@/lib/constants';
 import type { AnalysisRequest, AnalysisResponse, ApiErrorResponse } from '@/types';
@@ -49,12 +50,23 @@ Include specific numbers and percentages where possible. Format your response cl
   `.trim();
 }
 
-export default async function handler(
+const handler: NextApiHandler<AnalysisResponse | ApiErrorResponse> = async (
   req: NextApiRequest,
   res: NextApiResponse<AnalysisResponse | ApiErrorResponse>
-) {
+) => {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    return res.status(200).end();
+  }
+
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    console.error(`[analyze-resume] Method not allowed: ${req.method}`);
+    return res.status(405).json({ 
+      error: `Method not allowed. Received: ${req.method}, Expected: POST`
+    } as ApiErrorResponse);
   }
 
   const { resumeContent, jobDescription, jobTitle, companyName }: AnalysisRequest = req.body;
@@ -127,6 +139,11 @@ export default async function handler(
       error: 'Please provide a valid job description with meaningful content. Random characters or gibberish are not accepted.' 
     });
   }
+
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   try {
     const fullPrompt = buildAnalysisPrompt(jobDescription, resumeContent, jobTitle, companyName);
@@ -217,4 +234,6 @@ This is an OpenRouter policy requirement for free tier access.`;
       details: errorDetails,
     });
   }
-}
+};
+
+export default handler;
