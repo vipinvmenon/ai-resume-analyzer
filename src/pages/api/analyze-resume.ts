@@ -63,6 +63,72 @@ export default async function handler(
     return res.status(400).json({ error: ERROR_MESSAGES.RESUME_REQUIRED });
   }
 
+  // Validate job description quality
+  const trimmed = jobDescription.trim();
+  
+  // If the entire text is one long string without spaces, check it as a single word
+  if (!trimmed.includes(' ') && trimmed.length > 30) {
+    // Split on any non-letter character to get potential words
+    const potentialWords = trimmed.split(/[^a-zA-Z]+/).filter(w => w.length > 0);
+    if (potentialWords.length === 0) {
+      return res.status(400).json({ 
+        error: 'Please provide a valid job description with meaningful content. Random characters or gibberish are not accepted.' 
+      });
+    }
+    // Check if any potential word segment is meaningful
+    const hasAnyMeaningful = potentialWords.some(word => {
+      const cleanWord = word.toLowerCase();
+      if (cleanWord.length < 3) return false;
+      const vowels = (cleanWord.match(/[aeiou]/g) || []).length;
+      if (vowels === 0) return false;
+      if (cleanWord.length >= 5 && vowels / cleanWord.length < 0.2) return false;
+      const maxConsecutiveConsonants = Math.max(...(cleanWord.match(/[^aeiou]+/g) || []).map(m => m.length));
+      if (maxConsecutiveConsonants > 4) return false;
+      return true;
+    });
+    if (!hasAnyMeaningful) {
+      return res.status(400).json({ 
+        error: 'Please provide a valid job description with meaningful content. Random characters or gibberish are not accepted.' 
+      });
+    }
+  }
+  
+  const words = trimmed.split(/\s+/).filter(word => word.length > 0);
+  if (words.length < 3) {
+    return res.status(400).json({ 
+      error: 'Job description must contain at least 3 words with meaningful content.' 
+    });
+  }
+
+  // Check for meaningful content (words with vowels and reasonable patterns)
+  const meaningfulWords = words.filter(word => {
+    const cleanWord = word.toLowerCase().replace(/[^a-z]/g, '');
+    if (cleanWord.length < 3) return false;
+    
+    const vowels = (cleanWord.match(/[aeiou]/g) || []).length;
+    const consonants = cleanWord.length - vowels;
+    
+    // Must have at least one vowel
+    if (vowels === 0) return false;
+    
+    // For longer words, ensure reasonable vowel ratio (at least 20% vowels)
+    if (cleanWord.length >= 5 && vowels / cleanWord.length < 0.2) {
+      return false;
+    }
+    
+    // Check for patterns that suggest random characters (too many consecutive consonants)
+    const maxConsecutiveConsonants = Math.max(...(cleanWord.match(/[^aeiou]+/g) || []).map(m => m.length));
+    if (maxConsecutiveConsonants > 4) return false;
+    
+    return true;
+  });
+
+  if (meaningfulWords.length < Math.ceil(words.length * 0.6)) {
+    return res.status(400).json({ 
+      error: 'Please provide a valid job description with meaningful content. Random characters or gibberish are not accepted.' 
+    });
+  }
+
   try {
     const fullPrompt = buildAnalysisPrompt(jobDescription, resumeContent, jobTitle, companyName);
 
