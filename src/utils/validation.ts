@@ -49,7 +49,6 @@ function hasMeaningfulContent(text: string): boolean {
     if (cleanWord.length < 3) return false;
     
     const vowels = (cleanWord.match(/[aeiou]/g) || []).length;
-    const consonants = cleanWord.length - vowels;
     
     // Must have at least one vowel
     if (vowels === 0) return false;

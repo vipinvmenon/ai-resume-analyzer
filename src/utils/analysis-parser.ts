@@ -222,7 +222,6 @@ function extractKeywords(text: string): KeywordDensity[] {
   ];
   
   let sectionStart = -1;
-  let sectionEnd = text.length;
   
   for (const keyword of keywordSectionKeywords) {
     const patterns = [

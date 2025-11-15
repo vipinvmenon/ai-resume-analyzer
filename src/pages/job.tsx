@@ -2,7 +2,7 @@ import Stepper from '@/components/Stepper';
 import { useAnalysis } from '@/context/AnalysisContext';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { ArrowLeft, ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowLeft, Sparkles } from 'lucide-react';
 import { validateJobDescription } from '@/utils/validation';
 import { UI_MESSAGES } from '@/lib/constants';
 
