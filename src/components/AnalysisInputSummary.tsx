@@ -1,4 +1,5 @@
 import type { ResumeFile } from '@/types';
+import { CheckCircle2 } from 'lucide-react';
 import { UI_MESSAGES } from '@/lib/constants';
 
 interface AnalysisInputSummaryProps {
@@ -24,10 +25,15 @@ export default function AnalysisInputSummary({
       {resume && (
         <div className="mb-4">
           <h3 className="text-lg font-medium">Resume</h3>
-          <p className="text-white/80">
-            {resume.name} • {(resume.size / 1024).toFixed(1)} KB
+          <p className="flex items-center gap-2 text-white/80">
+            <span>
+              {resume.name} • {(resume.size / 1024).toFixed(1)} KB
+            </span>
             {resume.content && (
-              <span className="ml-2 text-sm text-green-300">✓ Text extracted</span>
+              <span className="flex items-center gap-1 text-sm text-green-300">
+                <CheckCircle2 className="h-4 w-4" />
+                Text extracted
+              </span>
             )}
           </p>
         </div>

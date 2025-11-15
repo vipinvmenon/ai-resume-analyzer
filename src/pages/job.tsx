@@ -2,6 +2,7 @@ import Stepper from '@/components/Stepper';
 import { useAnalysis } from '@/context/AnalysisContext';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { ArrowLeft, ArrowRight, Sparkles } from 'lucide-react';
 import { validateJobDescription } from '@/utils/validation';
 import { UI_MESSAGES } from '@/lib/constants';
 
@@ -88,16 +89,18 @@ export default function Job() {
 
         <div className="mt-8 flex items-center justify-between">
           <button
-            className="rounded-md border border-white/20 px-4 py-2 text-sm text-white/80 hover:bg-white/5"
+            className="inline-flex items-center gap-2 rounded-md border border-white/20 px-4 py-2 text-sm text-white/80 hover:bg-white/5 cursor-pointer"
             onClick={() => router.push('/start')}
           >
+            <ArrowLeft className="h-4 w-4" />
             {UI_MESSAGES.JOB_BACK}
           </button>
           <button
-            className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500"
+            className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 cursor-pointer"
             onClick={handleContinue}
           >
             {UI_MESSAGES.JOB_ANALYZE}
+            <Sparkles className="h-4 w-4" />
           </button>
         </div>
       </div>

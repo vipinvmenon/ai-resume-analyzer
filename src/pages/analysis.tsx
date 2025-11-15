@@ -1,9 +1,11 @@
 import Stepper from '@/components/Stepper';
 import AnalysisResults from '@/components/AnalysisResults';
 import AnalysisSkeleton from '@/components/skeletons/AnalysisSkeleton';
+import ShinyText from '@/components/ShinyText';
 import { useAnalysis } from '@/context/AnalysisContext';
 import { useRouter } from 'next/router';
 import { useEffect, useState, useRef } from 'react';
+import { CheckCircle2 } from 'lucide-react';
 import { analyzeResume } from '@/services/resume-analysis';
 
 export default function Analysis() {
@@ -75,28 +77,6 @@ export default function Analysis() {
   return (
     <main className="px-6 py-12">
       <Stepper active={3} />
-      
-      {/* Analysis Complete Status */}
-      {analysisResult && (
-        <div className="mx-auto mt-6 max-w-6xl">
-          <div className="inline-flex items-center gap-2 rounded-full bg-green-500/20 px-4 py-2 text-sm font-medium text-green-300">
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-            Analysis Complete
-          </div>
-        </div>
-      )}
 
       {/* Main Heading */}
       <div className="mx-auto mt-8 max-w-6xl text-center">
@@ -107,6 +87,27 @@ export default function Analysis() {
           Comprehensive analysis of your resume against the job description
         </p>
       </div>
+
+      {/* Analyzing Status with Shiny Text OR Analysis Complete */}
+      {isAnalyzing && !analysisResult ? (
+        <div className="mx-auto mt-8 max-w-6xl text-center">
+          <ShinyText
+            text="Analyzing your resume..."
+            speed={3}
+            className="text-2xl font-semibold md:text-3xl"
+          />
+          <p className="mt-3 text-sm text-white/50">
+            Please wait while we fetch the data
+          </p>
+        </div>
+      ) : analysisResult ? (
+        <div className="mx-auto mt-8 max-w-6xl text-center">
+          <div className="inline-flex items-center gap-2 rounded-full bg-green-500/20 px-4 py-2 text-sm font-medium text-green-300">
+            <CheckCircle2 className="h-4 w-4" />
+            Analysis Complete
+          </div>
+        </div>
+      ) : null}
 
       <div className="mx-auto mt-10 max-w-6xl space-y-6">
         {/* Loading State - Skeleton */}

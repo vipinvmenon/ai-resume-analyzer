@@ -1,4 +1,7 @@
 import Link from "next/link";
+import GlareHover from "./GlareHover";
+import GradientText from "./GradientText";
+import { Sparkles } from "lucide-react";
 
 export default function Hero() {
   return (
@@ -10,36 +13,51 @@ export default function Hero() {
           stroke="currentColor"
           viewBox="0 0 24 24"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
-          />
+          <rect x="4" y="4" width="16" height="16" rx="3" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+          <circle cx="9" cy="10" r="1.5" fill="currentColor" />
+          <circle cx="15" cy="10" r="1.5" fill="currentColor" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 15h6" />
         </svg>
         AI‑Powered Analysis
       </div>
 
       <h1 className="text-center text-4xl font-extrabold leading-tight text-white md:text-6xl">
-        Analyze Your Resume{' '}
-        <span className="text-white">Against</span>{' '}
-        <span className="bg-gradient-to-r from-blue-400 via-sky-400 to-violet-400 bg-clip-text text-transparent">
-          Any Job in
-        </span>{' '}
-        <span className="text-violet-400">Seconds</span>
+        Analyze Your Resume Against Any Job in Seconds
+        
       </h1>
 
-      <p className="mx-auto mt-6 max-w-2xl text-center text-white/70">
-        AI‑powered matching, ATS scoring, and personalized recommendations to land your dream job.
-      </p>
+      <div className="mx-auto mt-6 max-w-2xl text-center">
+        <GradientText
+          colors={["#40ffaa", "#4079ff", "#40ffaa", "#4079ff", "#40ffaa"]}
+          animationSpeed={8}
+          showBorder={false}
+          className="text-lg"
+        >
+          AI‑powered matching, ATS scoring, and personalized recommendations to land your dream job.
+        </GradientText>
+      </div>
 
       <div className="mt-10 flex justify-center">
-        <Link
-          href="/start"
-          className="group inline-flex items-center gap-2 rounded-lg bg-blue-600 px-8 py-4 font-medium text-white shadow-lg hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 transition-all"
-        >
-          Start Analysis
-          <span className="transition-transform group-hover:translate-x-1">→</span>
+        <Link href="/start" className="block">
+          <GlareHover
+            width="auto"
+            height="auto"
+            background="rgba(59, 130, 246, 0.1)"
+            borderRadius="2.5rem"
+            borderColor="rgba(96, 165, 250, 0.3)"
+            glareColor="#ffffff"
+            glareOpacity={0.3}
+            glareAngle={-30}
+            glareSize={300}
+            transitionDuration={800}
+            playOnce={false}
+            className="backdrop-blur px-6 py-3 font-medium text-white shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+          >
+            <div className="inline-flex items-center gap-2">
+              Start Analysis
+              <Sparkles className="h-3 w-3 text-yellow-200 transition-transform group-hover:scale-110" />
+            </div>
+          </GlareHover>
         </Link>
       </div>
     </section>
