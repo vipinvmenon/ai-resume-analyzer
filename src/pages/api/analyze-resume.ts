@@ -1,5 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import type { NextApiHandler } from 'next';
+import type { NextApiRequest, NextApiResponse, NextApiHandler } from 'next';
 import { OpenAI } from 'openai';
 import { ERROR_MESSAGES, AI_CONFIG } from '@/lib/constants';
 import type { AnalysisRequest, AnalysisResponse, ApiErrorResponse } from '@/types';
